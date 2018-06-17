@@ -48,10 +48,6 @@ init =
 
 port toSubscribers : String -> Cmd msg
 
-
-port toElm : (Value -> msg) -> Sub msg
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -70,7 +66,7 @@ messageToSubscribers text =
 
         result =
             Encode.object
-                [ ( "increment", Encode.int value )
+                [ ( "step", Encode.int value )
                 ]
     in
         Encode.encode 0 result
@@ -91,24 +87,8 @@ view model =
         ]
 
 
-
 -- SUBSCRIPTIONS
-
-
-decodeValue : Value -> Msg
-decodeValue x =
-    let
-        result =
-            Decode.decodeValue Decode.string x
-    in
-        case result of
-            Ok string ->
-                UpdateStr string
-
-            Err _ ->
-                UpdateStr "Silly JavaScript, you can't kill me!"
-
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    toElm (decodeValue)
+    Sub.none

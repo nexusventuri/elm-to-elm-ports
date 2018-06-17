@@ -34,7 +34,6 @@ type alias Model =
 
 type Msg
     = IncrementValue Int
-    | None
 
 
 
@@ -51,9 +50,6 @@ update msg model =
     case msg of
         IncrementValue increment ->
             ( { model | count = model.count + increment }, Cmd.none )
-
-        None ->
-            ( model, Cmd.none )
 
 
 
@@ -81,19 +77,19 @@ decodeMessage x =
     in
         case result of
             Ok v ->
-                IncrementValue v.increment
+                IncrementValue v.step
 
             Err e ->
                 log ("error:" ++ e) None
 
 
 type alias MessageFromMain =
-    { increment : Int }
+    { step : Int }
 
 
 messageFromMainDecoder : Decode.Decoder MessageFromMain
 messageFromMainDecoder =
-    Decode.map MessageFromMain (Decode.field "increment" Decode.int)
+    Decode.map MessageFromMain (Decode.field "step" Decode.int)
 
 
 subscriptions : Model -> Sub Msg
