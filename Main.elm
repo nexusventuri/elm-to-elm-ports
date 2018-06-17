@@ -4,7 +4,9 @@ import Html exposing (Html, text, div, button, input)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (type_, value)
 import Json.Encode exposing (Value)
+import Json.Encode as Encode exposing (encode, int, object)
 import Json.Decode as Decode
+import Debug exposing (log)
 
 
 main : Program Never Model Msg
@@ -28,7 +30,7 @@ type alias Model =
 
 type Msg
     = UpdateStr String
-    | SendToJs String
+    | SendToSubscribers String
 
 
 
@@ -44,7 +46,7 @@ init =
 ----- UPDATE
 
 
-port toJs : String -> Cmd msg
+port toSubscribers : String -> Cmd msg
 
 
 port toElm : (Value -> msg) -> Sub msg
@@ -56,8 +58,22 @@ update msg model =
         UpdateStr str ->
             ( { model | message = str }, Cmd.none )
 
-        SendToJs str ->
-            ( model, toJs str )
+        SendToSubscribers str ->
+            log ("value" ++ str) ( model, toSubscribers (messageToSubscribers str) )
+
+
+messageToSubscribers : String -> String
+messageToSubscribers text =
+    let
+        value =
+            String.toInt text |> Result.toMaybe |> Maybe.withDefault 0
+
+        result =
+            Encode.object
+                [ ( "increment", Encode.int value )
+                ]
+    in
+        Encode.encode 0 result
 
 
 
@@ -67,11 +83,11 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ input [ type_ "text", onInput UpdateStr, value model.message ] []
+        [ input [ type_ "number", onInput UpdateStr, value model.message ] []
         , div [] [ text model.message ]
         , button
-            [ onClick (SendToJs model.message) ]
-            [ text "Send To JS" ]
+            [ onClick (SendToSubscribers model.message) ]
+            [ text "Send To Subscribers" ]
         ]
 
 
