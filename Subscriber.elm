@@ -34,6 +34,7 @@ type alias Model =
 
 type Msg
     = IncrementValue Int
+    | None
 
 
 
@@ -50,6 +51,9 @@ update msg model =
     case msg of
         IncrementValue increment ->
             ( { model | count = model.count + increment }, Cmd.none )
+
+        None ->
+            ( model, Cmd.none )
 
 
 

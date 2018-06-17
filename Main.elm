@@ -48,6 +48,7 @@ init =
 
 port toSubscribers : String -> Cmd msg
 
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -87,7 +88,9 @@ view model =
         ]
 
 
+
 -- SUBSCRIPTIONS
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =

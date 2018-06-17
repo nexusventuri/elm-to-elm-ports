@@ -1,7 +1,14 @@
 #!/bin/bash
 
 while true; do
-  file=$(inotifywait -e modify . | grep "MODIFY.*elm" | sed "s/^.*MODIFY\s//")
+  if hash inotifywait 2> /dev/null; then
+    file=$(inotifywait -e modify . | grep "MODIFY.*elm" | sed "s/^.*MODIFY\s//")
+  elif hash fswatch 2> /dev/null; then
+    file=$(fswatch -1 *.elm | sed "s/^.*\/\(.*\)$/\1/")
+  else
+    echo "Can't find either inotifywait (Linux) or fswatch (macos), please install one of them and run the command again"
+    break;
+  fi
 
   echo "building file"
   case $file in
